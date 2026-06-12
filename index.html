@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Priya Sharma — Retail Operations Manager</title>
+  <style>
+    :root {
+      --bg: #0d0a0f;
+      --surface: rgba(22,16,30,0.75);
+      --surface2: rgba(30,20,42,0.85);
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(196,130,255,0.4);
+      --accent: #c47aff;
+      --accent2: #ff7eb3;
+      --accent3: #ffd166;
+      --text: #ede8f5;
+      --muted: #7a6e8a;
+      --tag-bg: rgba(196,122,255,0.07);
+      --tag-border: rgba(196,122,255,0.22);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CURSOR ── */
+    #cursor {
+      position: fixed; width: 10px; height: 10px;
+      background: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      mix-blend-mode: screen;
+    }
+    #cursor-ring {
+      position: fixed; width: 34px; height: 34px;
+      border: 1.5px solid rgba(196,122,255,0.5); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: transform 0.18s ease, width 0.3s, height 0.3s, border-color 0.3s;
+    }
+
+    /* ── ORBS ── */
+    #orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.15; animation: orbFloat linear infinite; }
+    .orb1 { width: 520px; height: 520px; background: radial-gradient(circle, #c47aff, transparent); top: -120px; right: -100px; animation-duration: 24s; }
+    .orb2 { width: 380px; height: 380px; background: radial-gradient(circle, #ff7eb3, transparent); bottom: 5%; left: -80px; animation-duration: 30s; animation-delay: -10s; }
+    .orb3 { width: 300px; height: 300px; background: radial-gradient(circle, #ffd166, transparent); top: 40%; left: 40%; animation-duration: 20s; animation-delay: -5s; }
+    @keyframes orbFloat {
+      0%   { transform: translate(0,0) scale(1); }
+      25%  { transform: translate(30px,-50px) scale(1.04); }
+      50%  { transform: translate(-40px,30px) scale(0.96); }
+      75%  { transform: translate(50px,20px) scale(1.06); }
+      100% { transform: translate(0,0) scale(1); }
+    }
+
+    /* ── GRID ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(196,122,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196,122,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(13,10,15,0.65);
+      backdrop-filter: blur(24px) saturate(1.5);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .nav-logo {
+      font-size: 1.05rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 26px; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.8rem; font-weight: 500;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      transition: color 0.25s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--accent);
+      transform: scaleX(0); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: center;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* ── HERO ── */
+    #hero { min-height: 100vh; display: flex; align-items: center; padding-top: 60px; }
+    .hero-inner { display: flex; align-items: center; gap: 64px; width: 100%; }
+    .hero-content { max-width: 620px; flex: 1; }
+    .hero-photo-wrap { flex-shrink: 0; position: relative; }
+    .hero-photo-wrap::before {
+      content: ''; position: absolute; inset: -3px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+      animation: spinBorder 5s linear infinite; z-index: 0;
+    }
+    .hero-photo-wrap::after {
+      content: ''; position: absolute; inset: -22px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,122,255,0.12), transparent 70%);
+      z-index: 0; animation: orbFloat 7s ease-in-out infinite;
+    }
+    @keyframes spinBorder {
+      0%   { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .hero-photo {
+      width: 220px; height: 220px; border-radius: 50%;
+      object-fit: cover; object-position: center top;
+      position: relative; z-index: 1;
+      border: 4px solid var(--bg); display: block;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(196,122,255,0.07);
+      border: 1px solid rgba(196,122,255,0.2);
+      border-radius: 99px; padding: 6px 18px;
+      font-size: 0.76rem; color: var(--accent);
+      margin-bottom: 28px; letter-spacing: 1px; text-transform: uppercase;
+      animation: badgePulse 3s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(196,122,255,0.15); }
+      50% { box-shadow: 0 0 0 8px rgba(196,122,255,0); }
+    }
+    .hero-badge::before { content: '●'; font-size: 0.55rem; animation: dot 2s infinite; }
+    @keyframes dot { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    h1 { font-size: clamp(2.6rem, 5.5vw, 4.2rem); font-weight: 800; line-height: 1.08; letter-spacing: -2px; margin-bottom: 10px; }
+    .name-accent {
+      background: linear-gradient(135deg, #c47aff 0%, #ff7eb3 50%, #c47aff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer { 0%{background-position:0% center} 100%{background-position:200% center} }
+    .hero-role { font-size: 1.1rem; color: var(--muted); margin-bottom: 22px; }
+    .hero-desc { font-size: 1rem; color: #9988aa; max-width: 560px; line-height: 1.8; margin-bottom: 40px; }
+    .hero-stats { display: flex; gap: 36px; margin-bottom: 40px; flex-wrap: wrap; }
+    .stat-num { display: block; font-size: 2rem; font-weight: 800; color: var(--accent); line-height: 1; letter-spacing: -1px; }
+    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 5px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 12px;
+      font-size: 0.87rem; font-weight: 600;
+      text-decoration: none; cursor: none; border: none;
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #9b4fd4); color: #0d0a0f; font-weight: 700; }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 32px rgba(196,122,255,0.35); }
+    .btn-secondary { background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid var(--border); backdrop-filter: blur(8px); }
+    .btn-secondary:hover { transform: translateY(-3px) scale(1.03); border-color: var(--accent); color: var(--accent); }
+
+    /* ── SECTIONS ── */
+    section { padding: 92px 0; }
+    .section-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 4px; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 14px; }
+    .section-sub { color: var(--muted); font-size: 0.96rem; max-width: 500px; margin-bottom: 52px; line-height: 1.7; }
+    .divider { width: 40px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin-bottom: 20px; }
+
+    /* ── GLASS ── */
+    .glass {
+      background: var(--surface);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    /* ── STRENGTHS ── */
+    .strengths-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .strength-card {
+      padding: 26px;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s, border-color 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .strength-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .strength-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(196,122,255,0.06) 0%, transparent 65%);
+      opacity: 0; transition: opacity 0.4s; pointer-events: none;
+    }
+    .strength-card:hover { transform: translateY(-6px) scale(1.015); box-shadow: 0 20px 48px rgba(0,0,0,0.4); border-color: var(--border-hover); }
+    .strength-card:hover::before { opacity: 1; }
+    .strength-card:hover::after { opacity: 1; }
+    .card-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 16px; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .strength-card:hover .card-icon { transform: scale(1.15) rotate(-4deg); }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .card-desc { font-size: 0.855rem; color: var(--muted); line-height: 1.75; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+    .tag { font-size: 0.7rem; background: var(--tag-bg); border: 1px solid var(--tag-border); color: var(--accent); padding: 3px 10px; border-radius: 99px; transition: all 0.2s; }
+    .tag:hover { background: rgba(196,122,255,0.15); }
+    .tag.gold { background: rgba(255,209,102,0.08); border-color: rgba(255,209,102,0.25); color: var(--accent3); }
+    .tag.pink { background: rgba(255,126,179,0.08); border-color: rgba(255,126,179,0.25); color: var(--accent2); }
+
+    /* ── EXPERIENCE TIMELINE ── */
+    .timeline { position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+    }
+    .timeline-item { position: relative; padding-left: 62px; margin-bottom: 48px; }
+    .timeline-dot {
+      position: absolute; left: 13px; top: 20px;
+      width: 15px; height: 15px; border-radius: 50%;
+      background: var(--accent); border: 3px solid var(--bg);
+      box-shadow: 0 0 0 2px var(--accent), 0 0 14px rgba(196,122,255,0.5);
+      animation: dotGlow 2.5s ease-in-out infinite;
+    }
+    @keyframes dotGlow {
+      0%,100% { box-shadow: 0 0 0 2px var(--accent), 0 0 8px rgba(196,122,255,0.4); }
+      50% { box-shadow: 0 0 0 4px var(--accent), 0 0 20px rgba(196,122,255,0.7); }
+    }
+    .timeline-item:nth-child(2) .timeline-dot { background: var(--accent2); box-shadow: 0 0 0 2px var(--accent2), 0 0 12px rgba(255,126,179,0.5); }
+    .timeline-item:nth-child(3) .timeline-dot { background: var(--accent3); box-shadow: 0 0 0 2px var(--accent3), 0 0 12px rgba(255,209,102,0.5); }
+    .timeline-item:nth-child(4) .timeline-dot { background: #88ddff; box-shadow: 0 0 0 2px #88ddff, 0 0 12px rgba(136,221,255,0.5); }
+    .timeline-box { padding: 22px 26px; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s; }
+    .timeline-box:hover { transform: translateX(4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3), -2px 0 0 var(--accent); }
+    .timeline-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .timeline-company { font-size: 1.05rem; font-weight: 700; }
+    .timeline-role { font-size: 0.82rem; color: var(--accent); font-weight: 500; margin-top: 2px; }
+    .timeline-period { font-size: 0.76rem; color: var(--muted); background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+    .timeline-location { font-size: 0.75rem; color: var(--muted); margin-bottom: 12px; }
+    .timeline-highlights { font-size: 0.86rem; color: #9988aa; line-height: 1.8; }
+    .timeline-highlights li { margin-left: 18px; margin-bottom: 4px; }
+
+    /* ── SKILLS ── */
+    .skills-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+    .skill-group { padding: 22px; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s; }
+    .skill-group:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+    .skill-group-title { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 14px; }
+    .skill-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-pill { font-size: 0.78rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: #9988aa; padding: 5px 12px; border-radius: 8px; transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); cursor: default; }
+    .skill-pill:hover { border-color: rgba(196,122,255,0.4); color: var(--accent); background: rgba(196,122,255,0.07); transform: translateY(-2px) scale(1.05); }
+
+    /* ── CONTACT ── */
+    .contact-inner { max-width: 580px; margin: 0 auto; text-align: center; }
+    .contact-links { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
+    .contact-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border: 1px solid var(--border); border-radius: 12px;
+      text-decoration: none; color: var(--text); font-size: 0.86rem; font-weight: 500;
+      background: var(--surface); backdrop-filter: blur(12px);
+      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .contact-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 32px rgba(196,122,255,0.2); }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid var(--border); padding: 24px 0; text-align: center; color: var(--muted); font-size: 0.76rem; }
+
+    /* ── RIPPLE ── */
+    .ripple { position: fixed; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, rgba(196,122,255,0.22), transparent); transform: scale(0); animation: rippleOut 0.7s cubic-bezier(0.16,1,0.3,1) forwards; z-index: 9990; }
+    @keyframes rippleOut { to { transform: scale(1); opacity: 0; } }
+
+    /* ── FADE UP ── */
+    .fade-up { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .fade-up:nth-child(2){transition-delay:0.08s}.fade-up:nth-child(3){transition-delay:0.16s}.fade-up:nth-child(4){transition-delay:0.24s}.fade-up:nth-child(5){transition-delay:0.32s}.fade-up:nth-child(6){transition-delay:0.40s}
+
+    @media (max-width: 768px) {
+      .hero-inner { flex-direction: column-reverse; gap: 28px; }
+      .hero-photo { width: 150px; height: 150px; }
+      body { cursor: auto; }
+      #cursor, #cursor-ring { display: none; }
+    }
+    /* ── PDF BUTTON ── */
+    .pdf-btn {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      z-index: 200;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--accent), #9b4fd4);
+      color: #0d0a0f; font-weight: 700; font-size: 0.82rem;
+      border: none; border-radius: 50px; cursor: none;
+      box-shadow: 0 8px 24px rgba(196,122,255,0.4);
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      letter-spacing: 0.3px;
+    }
+    .pdf-btn:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 14px 32px rgba(196,122,255,0.55); }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { background: #fff !important; color: #111 !important; cursor: auto !important; }
+      #cursor, #cursor-ring, #orbs, nav, .pdf-btn, body::before { display: none !important; }
+      #hero { min-height: auto; padding-top: 20px; }
+      .hero-inner { gap: 24px; }
+      .hero-photo-wrap { display: none; }
+      .name-accent { -webkit-text-fill-color: #7c3aed !important; }
+      .hero-badge { background: #f3e8ff !important; color: #7c3aed !important; border-color: #d8b4fe !important; }
+      .hero-desc, .section-sub { color: #555 !important; }
+      .stat-num { color: #7c3aed !important; }
+      .stat-label, .timeline-role, .cert-year, .skill-group-title { color: #7c3aed !important; }
+      .muted, .timeline-location, .timeline-highlights, .timeline-period { color: #666 !important; }
+      .glass { background: #f9f9fc !important; border: 1px solid #e0d7f0 !important; backdrop-filter: none !important; box-shadow: none !important; }
+      .tag { background: #f3e8ff !important; border-color: #d8b4fe !important; color: #7c3aed !important; }
+      .tag.gold { background: #fffbeb !important; border-color: #fde68a !important; color: #92400e !important; }
+      .tag.pink { background: #fdf2f8 !important; border-color: #fbcfe8 !important; color: #9d174d !important; }
+      .skill-pill { background: #f3e8ff !important; border-color: #d8b4fe !important; color: #6d28d9 !important; }
+      .card-desc, .timeline-highlights li { color: #444 !important; }
+      .divider { background: #7c3aed !important; }
+      section { padding: 32px 0 !important; break-inside: avoid; }
+      .fade-up { opacity: 1 !important; transform: none !important; }
+      .expertise-grid, .strengths-grid, .certs-grid, .projects-grid, .skills-section { break-inside: avoid; }
+      footer { color: #999 !important; }
+      a { color: inherit !important; text-decoration: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<div id="orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-logo">Priya Sharma</div>
+    <ul class="nav-links">
+      <li><a href="#strengths">Strengths</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">Retail &amp; Operations Leader</div>
+        <h1><span class="name-accent">Priya Sharma</span></h1>
+        <p class="hero-role">Store Manager · Tata Starbucks · Punjab, India</p>
+        <p class="hero-desc">
+          9 years of expertise across retail, logistics, and operations.
+          From managing multi-store Starbucks teams to handling 5000+ daily shipments at Flipkart —
+          skilled in SAP, Power BI, ERP systems, and building high-performing teams.
+        </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">9+</span>
+            <span class="stat-label">Years Exp.</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Stores Managed</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">15</span>
+            <span class="stat-label">Team Size</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">5K+</span>
+            <span class="stat-label">Daily Shipments</span>
+          </div>
+        </div>
+        <div class="hero-btns">
+          <a href="#experience" class="btn btn-primary">▶ View Experience</a>
+          <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTHS -->
+<section id="strengths">
+  <div class="container">
+    <p class="section-label">What I Bring</p>
+    <div class="divider"></div>
+    <h2 class="section-title">Core Strengths</h2>
+    <p class="section-sub">Proven across high-volume retail, fast-paced logistics, and customer-focused environments.</p>
+    <div class="strengths-grid">
+
+      <div class="strength-card glass fade-up">
+        <div class="card-icon" style="background:rgba(196,122,255,0.1)">🏪</div>
+        <div class="card-title">Multi-Store Operations</div>
+        <div class="card-desc">Managing 2–3 Starbucks stores simultaneously — handling performance targets, stock accuracy, customer experience, and day-to-day operations.</div>
+        <div class="card-tags"><span class="tag">Store Management</span><span class="tag">KPI Tracking</span><span class="tag">SAP</span></div>
+      </div>
+
+      <div class="strength-card glass fade-up">
+        <div class="card-icon" style="background:rgba(255,126,179,0.1)">👥</div>
+        <div class="card-title">Team Leadership</div>
+        <div class="card-desc">Leading teams of 15+ members, coordinating shift planning, staff development, and maintaining high morale in fast-paced service environments.</div>
+        <div class="card-tags"><span class="tag pink">Team of 15</span><span class="tag pink">Coaching</span><span class="tag pink">Operations</span></div>
+      </div>
+
+      <div class="strength-card glass fade-up">
+        <div class="card-icon" style="background:rgba(255,209,102,0.1)">📦</div>
+        <div class="card-title">Inventory &amp; Logistics</div>
+        <div class="card-desc">End-to-end inventory management via SAP — stock ordering, transfers, replenishment. Managed 5000+ daily shipments at Flipkart including OFD and RTO processing.</div>
+        <div class="card-tags"><span class="tag gold">SAP</span><span class="tag gold">ERP</span><span class="tag gold">Stock Control</span></div>
+      </div>
+
+      <div class="strength-card glass fade-up">
+        <div class="card-icon" style="background:rgba(196,122,255,0.1)">📊</div>
+        <div class="card-title">Data &amp; Reporting</div>
+        <div class="card-desc">Sales analysis, KPI reporting, and operational dashboards using Power BI and Excel. Turning raw data into actionable business insights.</div>
+        <div class="card-tags"><span class="tag">Power BI</span><span class="tag">Excel</span><span class="tag">Sales Analysis</span></div>
+      </div>
+
+      <div class="strength-card glass fade-up">
+        <div class="card-icon" style="background:rgba(255,126,179,0.1)">⭐</div>
+        <div class="card-title">Customer Experience</div>
+        <div class="card-desc">Deep focus on customer engagement, satisfaction, and CRM — from Decathlon's sports floor to Starbucks store experience management.</div>
+        <div class="card-tags"><span class="tag pink">CRM</span><span class="tag pink">Customer Service</span><span class="tag pink">Retail</span></div>
+      </div>
+
+      <div class="strength-card glass fade-up">
+        <div class="card-icon" style="background:rgba(255,209,102,0.1)">🚀</div>
+        <div class="card-title">High-Pressure Delivery</div>
+        <div class="card-desc">Thrives under pressure — delivered peak logistics operations at Flipkart sale periods and maintains operational accuracy across multiple Starbucks locations.</div>
+        <div class="card-tags"><span class="tag gold">Logistics</span><span class="tag gold">Efficiency</span><span class="tag gold">Reliability</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="container">
+    <p class="section-label">Career Journey</p>
+    <div class="divider"></div>
+    <h2 class="section-title">Experience</h2>
+    <p class="section-sub">9 years across retail, logistics, sports, and education — always in roles that blend people and operations.</p>
+    <div class="timeline">
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-dot"></div>
+        <div class="timeline-box glass">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">Tata Starbucks India</div>
+              <div class="timeline-role">Store Manager</div>
+            </div>
+            <span class="timeline-period">Sep 2023 – Present</span>
+          </div>
+          <div class="timeline-location">📍 Amritsar</div>
+          <ul class="timeline-highlights">
+            <li>Managing operations of 2–3 stores simultaneously</li>
+            <li>Leading and managing a team of 15 members</li>
+            <li>Inventory management, stock ordering and transfers via SAP</li>
+            <li>Sales analysis, KPI tracking and operational reporting with Power BI &amp; Excel</li>
+            <li>Store performance, customer experience, and business target management</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-dot"></div>
+        <div class="timeline-box glass">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">Flipkart</div>
+              <div class="timeline-role">Lead Hub Operations</div>
+            </div>
+            <span class="timeline-period">May 2022 – Sep 2023</span>
+          </div>
+          <div class="timeline-location">📍 Gurdaspur</div>
+          <ul class="timeline-highlights">
+            <li>Managed high-volume logistics during peak sale periods</li>
+            <li>Handled up to 5000 shipments per day</li>
+            <li>ERP systems for shipment receiving, OFD processing, and RTO management</li>
+            <li>Maintained operational accuracy under high-pressure conditions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-dot"></div>
+        <div class="timeline-box glass">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">Decathlon Sports India</div>
+              <div class="timeline-role">Sports Leader &amp; CRM</div>
+            </div>
+            <span class="timeline-period">Mar 2019 – May 2022</span>
+          </div>
+          <div class="timeline-location">📍 Amritsar</div>
+          <ul class="timeline-highlights">
+            <li>Customer service, product selection assistance and CRM</li>
+            <li>Daily retail operations and store merchandising</li>
+            <li>Stock replenishment and inventory coordination</li>
+            <li>Supported sales targets and team coordination on floor</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item fade-up">
+        <div class="timeline-dot"></div>
+        <div class="timeline-box glass">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-company">Webberz</div>
+              <div class="timeline-role">Communication &amp; Personality Trainer</div>
+            </div>
+            <span class="timeline-period">2018 – 2019</span>
+          </div>
+          <ul class="timeline-highlights">
+            <li>Taught communication skills and personality development</li>
+            <li>Facilitated soft skills training for students and professionals</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <p class="section-label">Toolkit</p>
+    <div class="divider"></div>
+    <h2 class="section-title">Skills</h2>
+    <p class="section-sub">Operational tools, tech platforms, and people skills built across 9 years of hands-on work.</p>
+    <div class="skills-section">
+      <div class="skill-group glass fade-up">
+        <div class="skill-group-title">📊 Tech &amp; Tools</div>
+        <div class="skill-pills">
+          <span class="skill-pill">SAP</span><span class="skill-pill">Power BI</span><span class="skill-pill">ERP Systems</span><span class="skill-pill">Microsoft Excel</span>
+        </div>
+      </div>
+      <div class="skill-group glass fade-up">
+        <div class="skill-group-title">🏪 Retail Operations</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Multi-store Management</span><span class="skill-pill">Inventory Control</span><span class="skill-pill">Stock Management</span><span class="skill-pill">Merchandising</span>
+        </div>
+      </div>
+      <div class="skill-group glass fade-up">
+        <div class="skill-group-title">📦 Logistics</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Logistics Operations</span><span class="skill-pill">OFD Processing</span><span class="skill-pill">RTO Management</span><span class="skill-pill">Shipment Coordination</span>
+        </div>
+      </div>
+      <div class="skill-group glass fade-up">
+        <div class="skill-group-title">👥 Leadership</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Team Leadership</span><span class="skill-pill">CRM</span><span class="skill-pill">KPI Reporting</span><span class="skill-pill">Customer Experience</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <p class="section-label" style="text-align:center">Let's Connect</p>
+      <div class="divider" style="margin:12px auto 20px"></div>
+      <h2 class="section-title">Get in Touch</h2>
+      <p style="color:var(--muted); font-size:0.93rem; line-height:1.8; margin-top:12px;">
+        Open to new opportunities in retail operations, store management, and logistics leadership.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:Priyarampal.s@gmail.com" class="contact-link">✉️ Priyarampal.s@gmail.com</a>
+        <a href="https://www.linkedin.com/in/iampriyasharma96" class="contact-link" target="_blank" rel="noopener">💼 LinkedIn</a>
+        <a href="tel:+919988445933" class="contact-link">📞 +91-9988445933</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<button class="pdf-btn" onclick="window.print()">⬇ Download PDF</button>
+
+<footer>
+  <div class="container">
+    <p>© 2025 Priya Sharma · Retail &amp; Operations Leader · Punjab, India</p>
+  </div>
+</footer>
+
+<script>
+  // cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  function animCursor(){
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // ripple
+  document.addEventListener('click',e=>{
+    const s=110, r=document.createElement('div');
+    r.className='ripple';
+    r.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-s/2}px;top:${e.clientY-s/2}px`;
+    document.body.appendChild(r); setTimeout(()=>r.remove(),800);
+  });
+
+  // spotlight
+  document.querySelectorAll('.strength-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const rect=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-rect.left)/rect.width*100).toFixed(1)+'%');
+      card.style.setProperty('--my',((e.clientY-rect.top)/rect.height*100).toFixed(1)+'%');
+    });
+  });
+
+  // tilt
+  document.querySelectorAll('.strength-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const rect=card.getBoundingClientRect();
+      const dx=(e.clientX-rect.left-rect.width/2)/(rect.width/2);
+      const dy=(e.clientY-rect.top-rect.height/2)/(rect.height/2);
+      card.style.transform=`translateY(-6px) scale(1.015) rotateX(${-dy*4}deg) rotateY(${dx*4}deg)`;
+    });
+    card.addEventListener('mouseleave',()=>{ card.style.transform=''; });
+  });
+
+  // fade up
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+  // nav highlight
+  const sections=document.querySelectorAll('section[id]');
+  const navLinks=document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    sections.forEach(s=>{if(window.scrollY>=s.offsetTop-100)cur=s.id;});
+    navLinks.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+cur?'var(--accent)':'';});
+  },{passive:true});
+
+  // smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      const t=document.querySelector(a.getAttribute('href'));
+      if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  });
+
+  // counters
+  document.querySelectorAll('.stat-num').forEach(el=>{
+    const obs2=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting)return;
+        const raw=el.textContent.trim();
+        const num=parseFloat(raw); const suffix=raw.replace(/[\d.]/g,'');
+        if(isNaN(num))return;
+        let start=0;
+        const step=ts=>{
+          if(!start)start=ts;
+          const p=Math.min((ts-start)/1600,1);
+          const ease=1-Math.pow(1-p,3);
+          el.textContent=Math.floor(ease*num)+suffix;
+          if(p<1)requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+        obs2.unobserve(el);
+      });
+    },{threshold:0.5});
+    obs2.observe(el);
+  });
+</script>
+</body>
+</html>
